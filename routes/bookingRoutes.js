@@ -1,11 +1,12 @@
 const express = require("express");
+const router = express.Router();
 const Booking = require("../models/Booking");
 const Tour = require("../models/Tour");
 
-const router = express.Router();
-
-// 🟢 CREATE BOOKING (GUEST)
-router.post("/", async (req, res, next) => {
+// ================================
+// CREATE BOOKING (NO LOGIN)
+// ================================
+router.post("/", async (req, res) => {
   try {
     const {
       tour,
@@ -15,13 +16,16 @@ router.post("/", async (req, res, next) => {
       travellers
     } = req.body;
 
-    // Check tour exists
+    // ✅ check tour exists
     const tourExists = await Tour.findById(tour);
     if (!tourExists) {
-      res.status(404);
-      throw new Error("Tour not found");
+      return res.status(404).json({
+        success: false,
+        message: "Tour not found"
+      });
     }
 
+    // ✅ create booking
     const booking = await Booking.create({
       tour,
       customerName,
@@ -32,34 +36,13 @@ router.post("/", async (req, res, next) => {
 
     res.status(201).json({
       success: true,
-      booking
+      data: booking
     });
   } catch (error) {
-    next(error);
-  }
-});
-
-
-// 🟢 MARK BOOKING AS PAID (MOCK PAYMENT)  🔥 YAHAN PASTE
-router.put("/:id/pay", async (req, res, next) => {
-  try {
-    const booking = await Booking.findById(req.params.id);
-
-    if (!booking) {
-      res.status(404);
-      throw new Error("Booking not found");
-    }
-
-    booking.paymentStatus = "paid";
-    await booking.save();
-
-    res.status(200).json({
-      success: true,
-      message: "Payment successful",
-      booking
+    res.status(500).json({
+      success: false,
+      message: error.message
     });
-  } catch (error) {
-    next(error);
   }
 });
 

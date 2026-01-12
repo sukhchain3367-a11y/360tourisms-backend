@@ -6,9 +6,11 @@ require("dotenv").config();
 const tourRoutes = require("./routes/tourRoutes");
 const bookingRoutes = require("./routes/bookingRoutes");
 const errorHandler = require("./middlewares/errorHandler");
+const cartRoutes = require("./routes/cartRoutes");
 
 const app = express();
 app.use(express.json());
+app.use("/api/cart", cartRoutes);
 
 // 🔥 MongoDB connection
 mongoose
