@@ -28,7 +28,14 @@ app.use("/api/bookings", bookingRoutes);
 app.get("/", (req, res) => {
   res.send("360tourisms backend running 🚀");
 });
-
+ //HEALTH CHECK ROUTE
+app.get("/api/health", (req, res) => {
+  res.status(200).json({
+    status: "OK",
+    message: "Backend is healthy 🚀",
+    time: new Date()
+  });
+});
 // 🌍 GLOBAL ERROR HANDLER (ALWAYS LAST)
 app.use(errorHandler);
 
